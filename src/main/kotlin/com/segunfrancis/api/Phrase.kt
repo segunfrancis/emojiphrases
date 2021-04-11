@@ -1,22 +1,27 @@
 package com.segunfrancis.api
 
-import com.segunfrancis.*
-import com.segunfrancis.model.*
-import com.segunfrancis.repository.*
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import com.segunfrancis.API_VERSION
+import com.segunfrancis.model.Request
+import com.segunfrancis.repository.Repository
+import io.ktor.application.call
+import io.ktor.locations.KtorExperimentalLocationsAPI
+import io.ktor.locations.Location
+import io.ktor.locations.post
+import io.ktor.request.receive
+import io.ktor.response.respond
+import io.ktor.routing.Route
 
 const val PHRASE_ENDPOINT: String = "$API_VERSION/phrase"
 
+@KtorExperimentalLocationsAPI
+@Location(PHRASE_ENDPOINT)
+class Phrase
+
+@KtorExperimentalLocationsAPI
 fun Route.phrase(db: Repository) {
-    authenticate("auth") {
-        post(PHRASE_ENDPOINT) {
-            val request = call.receive<Request>()
-            val phrase = db.add(emojiValue = request.emoji, phraseValue = request.phrase)
-            call.respond(phrase)
-        }
+    post<Phrase> {
+        val request = call.receive<Request>()
+        val phrase = db.add("", emojiValue = request.emoji, phraseValue = request.phrase)
+        call.respond(phrase)
     }
 }

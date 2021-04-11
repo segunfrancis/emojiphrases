@@ -1,13 +1,13 @@
 package com.segunfrancis.repository
 
 import com.segunfrancis.model.EmojiPhrases
+import com.segunfrancis.model.Users
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
@@ -16,14 +16,15 @@ object DatabaseFactory {
         Database.connect(hikari())
 
         transaction {
-            SchemaUtils.create(EmojiPhrases)
+            SchemaUtils.create(EmojiPhrases) // Create database tables
+            SchemaUtils.create(Users)
         }
     }
 
     private fun hikari(): HikariDataSource {
         val config = HikariConfig()
-        config.driverClassName = "org.h2.Driver"
-        config.jdbcUrl = "jdbc:h2:mem:test"
+        config.driverClassName = "org.postgresql.Driver"
+        config.jdbcUrl = System.getenv("JDBC_DATABASE_URL")
         config.maximumPoolSize = 3
         config.isAutoCommit = false
         config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
