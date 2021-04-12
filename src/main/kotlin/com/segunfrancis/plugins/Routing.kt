@@ -13,22 +13,24 @@ import io.ktor.locations.KtorExperimentalLocationsAPI
 @KtorExperimentalLocationsAPI
 fun Application.configureRouting() {
 
-    val db = EmojiPhrasesRepository()
-
     val hashFunction = { s: String -> hash(s) }
+
+    DatabaseFactory.init()
+
+    val db = EmojiPhrasesRepository()
 
     routing {
         static("/static") {
             resources("images")
         }
 
-        home()
+        home(db)
 
-        about()
+        about(db)
 
         phrase(db)
 
-        phrases(db)
+        phrases(db, hashFunction)
 
         signIn(db, hashFunction)
 

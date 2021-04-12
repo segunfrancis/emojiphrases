@@ -4,6 +4,10 @@ import io.ktor.util.hex
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
+const val MIN_USER_ID_LENGTH: Int = 4
+
+const val MIN_PASSWORD_LENGTH: Int = 6
+
 val hashKey = hex(System.getenv("SECRET_KEY"))
 
 val hmacKey = SecretKeySpec(hashKey, "HmacSHA1")
