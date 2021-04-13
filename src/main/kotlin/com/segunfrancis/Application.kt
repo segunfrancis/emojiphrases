@@ -1,5 +1,7 @@
 package com.segunfrancis
 
+import com.segunfrancis.di.RepositoryDI.provideRepository
+import com.segunfrancis.di.ServiceDI.provideJwtService
 import com.segunfrancis.model.EPSession
 import com.segunfrancis.model.User
 import io.ktor.server.engine.embeddedServer
@@ -9,6 +11,8 @@ import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.auth.Authentication
+import io.ktor.auth.jwt.jwt
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.features.StatusPages
@@ -57,7 +61,21 @@ fun main() {
 
         install(Sessions) {
             cookie<EPSession>("SESSION") {
-                transform(SessionTransportTransformerMessageAuthentication(hashKey))
+                //transform(SessionTransportTransformerMessageAuthentication(hashKey, "HmacSHA1"))
+            }
+        }
+
+        install(Authentication) {
+            jwt("jwt") {
+                verifier(provideJwtService().verifier)
+                realm = "emojiphrases app"
+                validate {
+                    val payload = it.payload
+                    val claim = payload.getClaim("id")
+                    val claimString = claim.asString()
+                    val user = provideRepository().userById(claimString)
+                    user
+                }
             }
         }
 
