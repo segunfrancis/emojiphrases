@@ -1,1 +1,1 @@
-web: ./build/install/emojiphrases/bin/emojiphrases
+web: ./build/install/emojiphrases-segunfrancis/bin/emojiphrases-segunfrancis
