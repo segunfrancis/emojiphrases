@@ -12,6 +12,7 @@ import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
+import io.ktor.auth.authentication
 import io.ktor.auth.jwt.jwt
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
@@ -59,11 +60,11 @@ fun main() {
 
         install(Locations)
 
-        install(Sessions) {
+        /*install(Sessions) {
             cookie<EPSession>("SESSION") {
                 //transform(SessionTransportTransformerMessageAuthentication(hashKey, "HmacSHA1"))
             }
-        }
+        }*/
 
         install(Authentication) {
             jwt("jwt") {
@@ -100,3 +101,5 @@ fun ApplicationCall.verifyCode(date: Long, user: User, code: String, hashFunctio
     securityCode(date, user, hashFunction) == code && (System.currentTimeMillis() - date).let {
         it > 0 && it < TimeUnit.MILLISECONDS.convert(2, TimeUnit.HOURS)
     }
+
+val ApplicationCall.apiUser get() = authentication.principal<User>()
