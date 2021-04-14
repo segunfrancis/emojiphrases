@@ -39,3 +39,9 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgres_version")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
 }
+
+tasks {
+    named("stage") {
+        setDependsOn("installDist".toList())
+    }
+}
