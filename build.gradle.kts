@@ -41,7 +41,14 @@ dependencies {
 }
 
 tasks {
-    named("stage") {
+    /*named("stage") {
         setDependsOn("installDist".toList())
     }
+    create("stage") {
+        setDependsOn("installDist".toList())
+    }*/
+}
+
+tasks.register("stage") {
+    setDependsOn("installDist".toList())
 }
