@@ -1,6 +1,7 @@
 package com.segunfrancis
 
 import io.ktor.util.hex
+import java.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -18,6 +19,6 @@ fun hash(password: String): String {
     return hex(hmac.doFinal(password.toByteArray(Charsets.UTF_8)))
 }
 
-private val userIdPattern = "[a-zA-Z0-9_\\.]+".toRegex()
+val userIdPattern = "[a-zA-Z0-9_\\.]+".toRegex()
 
 internal fun userNameValid(userId: String) = userId.matches(userIdPattern)

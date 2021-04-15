@@ -5,7 +5,7 @@ import com.segunfrancis.MIN_USER_ID_LENGTH
 import com.segunfrancis.model.EPSession
 import com.segunfrancis.redirect
 import com.segunfrancis.repository.Repository
-import com.segunfrancis.userNameValid
+import com.segunfrancis.userIdPattern
 import io.ktor.application.call
 import io.ktor.freemarker.FreeMarkerContent
 import io.ktor.http.Parameters
@@ -30,6 +30,7 @@ data class SignIn(val userId: String = "", val error: String = "")
 fun Route.signIn(db: Repository, hashFunction: (String) -> String) {
 
     post<SignIn> {
+        fun userNameValid(userId: String) = userId.matches(userIdPattern)
         val signInParameters = call.receive<Parameters>()
         val userId = signInParameters["userId"] ?: return@post call.redirect(it)
         val password = signInParameters["password"] ?: return@post call.redirect(it)

@@ -1,5 +1,6 @@
 package com.segunfrancis.api
 
+import com.segunfrancis.API_VERSION
 import com.segunfrancis.JwtService
 import com.segunfrancis.hash
 import com.segunfrancis.redirect
@@ -13,7 +14,7 @@ import io.ktor.request.receive
 import io.ktor.response.respondText
 import io.ktor.routing.Route
 
-const val LOGIN_ENDPOINT = "/login"
+const val LOGIN_ENDPOINT = "$API_VERSION/login"
 
 @KtorExperimentalLocationsAPI
 @Location(LOGIN_ENDPOINT)

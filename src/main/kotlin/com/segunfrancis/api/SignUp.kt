@@ -1,12 +1,11 @@
 package com.segunfrancis.api
 
+import com.segunfrancis.API_VERSION
 import com.segunfrancis.JwtService
-import com.segunfrancis.MIN_PASSWORD_LENGTH
-import com.segunfrancis.MIN_USER_ID_LENGTH
+import com.segunfrancis.api.request.SignupApiRequest
 import com.segunfrancis.model.User
 import com.segunfrancis.redirect
 import com.segunfrancis.repository.Repository
-import com.segunfrancis.userNameValid
 import io.ktor.application.application
 import io.ktor.application.call
 import io.ktor.application.log
@@ -17,8 +16,9 @@ import io.ktor.locations.post
 import io.ktor.request.receive
 import io.ktor.response.respondText
 import io.ktor.routing.Route
+import java.util.*
 
-private const val SIGNUP_ENDPOINT: String = "/signup"
+private const val SIGNUP_ENDPOINT: String = "$API_VERSION/signup"
 
 @KtorExperimentalLocationsAPI
 @Location(SIGNUP_ENDPOINT)
@@ -32,12 +32,18 @@ data class SignUp(
 @KtorExperimentalLocationsAPI
 fun Route.signup(db: Repository, jwtService: JwtService, hashFunction: (String) -> String) {
 
+    val MIN_USER_ID_LENGTH: Int = 4
+    val MIN_PASSWORD_LENGTH: Int = 6
+    val userIdPattern = "[a-zA-Z0-9_\\.]+".toRegex()
+    fun userNameValid(userId: String) = userId.matches(userIdPattern)
+
     post<SignUp> {
-        val params = call.receive<Parameters>()
-        val userId = params["userId"] ?: return@post call.redirect(it)
-        val password = params["password"] ?: return@post call.redirect(it)
-        val email = params["email"] ?: return@post call.redirect(it)
-        val displayName = params["displayName"] ?: return@post call.redirect(it)
+        val params = call.receive<SignupApiRequest>()
+        val uuid = UUID.randomUUID().toString()
+        val userId = uuid.dropLast(28)
+        val password = params.password ?: return@post call.redirect(it)
+        val email = params.email ?: return@post call.redirect(it)
+        val displayName = params.displayName ?: return@post call.redirect(it)
 
         when {
             password.length < MIN_PASSWORD_LENGTH -> call.respondText("Password should be at least $MIN_PASSWORD_LENGTH characters long")

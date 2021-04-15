@@ -15,6 +15,7 @@ import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.Route
+import java.util.*
 
 const val PHRASE_ENDPOINT: String = "$API_VERSION/phrase"
 
@@ -25,25 +26,27 @@ class PhrasesApi
 @KtorExperimentalLocationsAPI
 fun Route.phrasesApi(db: Repository) {
     //authenticate("jwt") {
-        get<PhrasesApi> {
-            call.respond(db.phrases())
-        }
+    get<PhrasesApi> {
+        call.respond(db.phrases())
+    }
 
-        post<PhrasesApi> {
-            //val user = call.apiUser!!
+    post<PhrasesApi> {
+        //val user = call.apiUser!!
 
-            try {
-                val request = call.receive<PhrasesApiRequest>()
-                val phrase = db.add("userId", request.emoji, request.phrase)
-                if (phrase != null) {
-                    call.respond(phrase)
-                } else {
-                    call.respondText("invalid data received", status = HttpStatusCode.InternalServerError)
-                }
-
-            } catch (e: Throwable) {
-                call.respondText("invalid data received: ${e.localizedMessage}", status = HttpStatusCode.BadRequest)
+        try {
+            val request = call.receive<PhrasesApiRequest>()
+            val uuid = UUID.randomUUID().toString()
+            val userId = uuid.dropLast(28)
+            val phrase = db.add(userId, request.emoji, request.phrase)
+            if (phrase != null) {
+                call.respond(phrase)
+            } else {
+                call.respondText("invalid data received", status = HttpStatusCode.InternalServerError)
             }
+
+        } catch (e: Throwable) {
+            call.respondText("Invalid data received: ${e.localizedMessage}", status = HttpStatusCode.BadRequest)
         }
+    }
     //}
 }

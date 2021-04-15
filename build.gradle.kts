@@ -40,28 +40,6 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
 }
 
-tasks {
-    val stage by registering(StageTask::class)
-    val installDist by existing
-    stage {
-        dependsOn(installDist)
-    }
+tasks.create("stage") {
+    dependsOn("installDist")
 }
-
-open class StageTask : DefaultTask()
-
-
-/*tasks {
-    named("stage") {
-        setDependsOn("installDist".toList())
-    }
-    create("stage") {
-        setDependsOn("installDist".toList())
-    }
-}*/
-/*tasks.create("stage"){
-    setDependsOn("installDist".toList())
-}
-tasks.register("stage") {
-    setDependsOn("installDist".toList())
-}*/

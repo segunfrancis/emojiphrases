@@ -38,7 +38,8 @@ import java.util.concurrent.*
 
 @KtorExperimentalLocationsAPI
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
+    val port = System.getenv("PORT") ?: "8080"
+    embeddedServer(Netty, port = port.toInt(), host = "0.0.0.0") {
         install(DefaultHeaders)
 
         install(StatusPages) {
@@ -60,11 +61,11 @@ fun main() {
 
         install(Locations)
 
-        /*install(Sessions) {
+        install(Sessions) {
             cookie<EPSession>("SESSION") {
                 //transform(SessionTransportTransformerMessageAuthentication(hashKey, "HmacSHA1"))
             }
-        }*/
+        }
 
         install(Authentication) {
             jwt("jwt") {
